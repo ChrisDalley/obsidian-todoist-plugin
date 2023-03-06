@@ -89,10 +89,19 @@ export default class ObsidianTodoistPlugin extends Plugin {
             alert("No API key present in settings")
             return;
           }
+
+          const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+
           const todoistApi = new TodoistApi(this.settings.todoistApiKey);
 
+          const vaultName = this.app.vault.getName();
+          const noteName = view?.file.basename;
+
+          const noteLink = encodeURI(`obsidian://open?vault=${vaultName}&file=${noteName}`);
+
           todoistApi.addTask({
-            content: taskName
+            content: taskName,
+            description: `In note: ${noteName} - ${noteLink}`
           }).then(task => {
             const { id } = task;
 
